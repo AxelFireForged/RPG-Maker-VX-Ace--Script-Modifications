@@ -1,0 +1,109 @@
+#==============================================================================
+# * Title: Debuff Reflection Passive
+# * By: Axel FireForged & Blesstama
+#==============================================================================
+# Please provide credit to Axel FireForged & Blesstama if you use this!
+# Free for any use except porn games.
+#==============================================================================
+# What does this script do?
+# 
+# This overwrites the (Debuff) Effect code in Game_Battler and adds new code.
+# 
+# This allows an actor to counter debuffs as a sort of passive ability with the 
+# chances being up to you.
+# 
+# NOTE:
+# FOR ACTORS THIS EXCLUDES MAX HP AND MAX SP DEBUFFS AND CAN'T COUNTER THEM!
+# TO REMOVE THIS RESTRCTION CUT OUT THE CODE
+# || effect.data_id.between?(0,1)
+# ON LINE 97
+#==============================================================================
+# Setup:
+# 
+# Actor's Notebox:
+#
+# For actors to gain this passive you need to put <Passive_Reflect_Actor>
+# in the notebox. Customization will be explained below.
+# 
+# May update so you can also use for Battlers too.
+#
+#==============================================================================
+
+# This is the Actor's random chance's max for if they can reflect the debuff. 
+RND_AC = 100
+
+# When the RND_AC is rolled, if it rolls under the RND_AC_CHANCE, the reflect
+# is successful
+RND_AC_CHANCE = 50
+
+# When an Actor Reflects a debuff they can play an animation, set this to an ID.
+AC_ANI_ID = 41
+
+# When an Actor Reflects a debuff, you can add a log message! 
+# Make sure it stays in the quotes!
+AC_TEXT = "Their debuff got countered!"
+
+#==============================================================================
+  #--------------------------------------------------------------------------
+  # * Ability to do log messages in battle/map - Blesstama's Code
+  #--------------------------------------------------------------------------
+class Scene_Battle < Scene_Base 
+  attr_accessor:log_window
+end
+
+class Scene_Map < Scene_Base 
+  attr_accessor:log_window
+end
+
+
+class Game_Enemy < Game_Battler
+  #--------------------------------------------------------------------------
+  # * Easy Note Grabbing - Blesstama's Code
+  #--------------------------------------------------------------------------
+  def note
+    enemy.note.to_s
+  end
+  
+  def get_all_notes(*args)
+    notes = ""
+    notes += note unless args.include?(:self)
+    states.compact.each { |state| notes += state.note } unless args.include?(:state)
+    notes
+  end
+end
+class Game_Actor < Game_Battler
+  def note
+    actor.note.to_s
+  end
+
+  def get_all_notes(*args)
+    notes = ""
+    notes += note unless args.include?(:self)
+    notes += self.class.note unless args.include?(:class)
+    equips.compact.each { |equip| notes += equip.note } unless args.include?(:equip)
+    states.compact.each { |state| notes += state.note } unless args.include?(:state)
+    notes
+  end
+end
+
+class Game_Battler < Game_BattlerBase
+  #--------------------------------------------------------------------------
+  # * [Debuff] Effect - Axel and Blesstama Code
+  #--------------------------------------------------------------------------
+  def item_effect_add_debuff(user, item, effect)
+    chance = debuff_rate(effect.data_id) * luk_effect_rate(user)
+    if rand < chance
+      nt = self.get_all_notes.include?("<Passive_Reflect_Actor>") && rand(RND_AC) <= RND_AC_CHANCE
+      nt = false if user.actor? && self.actor? || effect.data_id.between?(0,1)
+      user.add_debuff(effect.data_id, effect.value1) if nt
+      self.animation_id = AC_ANI_ID if nt
+      SceneManager.scene.log_window.add_text(AC_TEXT) if nt
+      return if nt
+      add_debuff(effect.data_id, effect.value1)
+      @result.success = true
+    end
+  end
+end
+#==============================================================================
+# End of Script
+#==============================================================================
