@@ -11,7 +11,7 @@
 # Setup:
 # 
 # When using this, if you want to lower volume for a Cutscene, you can use this.
-# Use the following script calls to lower certain volume catagories:
+# Use the following script calls to lower certain volume categories:
 # 
 # RPG::BGM.new(RPG::BGM.last.name, RPG::BGM.last.volume +/- Sound::SceneVolReduction, 
 # RPG::BGM.last.pitch).play
