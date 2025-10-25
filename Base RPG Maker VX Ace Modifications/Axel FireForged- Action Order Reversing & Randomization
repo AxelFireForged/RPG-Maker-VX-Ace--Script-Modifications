@@ -1,0 +1,47 @@
+#==============================================================================
+# * Title: Action Order Reversing & Randomization
+# * By: Axel FireForged
+#==============================================================================
+# Please provide credit to Axel FireForged if you use this!
+#==============================================================================
+# What does this script do?
+#
+# This script allows you to change up how the action order is created, allowing
+# you to change up order on the fight for possible boss mechanics!
+#
+# Depending on what switches you use, you can either reverse turn order or
+# make it entirely random.
+# If you are using both switches, shuffling goes first, then reversal.
+#
+# If you have a script that messes with BattleManager, there is a chance that
+# the script doesn't work.
+# 
+#==============================================================================
+# * Customization Section
+#==============================================================================
+
+# This reverses turn order; The fastest characters become the slowest.
+# Like Trick Room from Pokemon. Leave it at 0 to not use this switch.
+REVERSAL_SWITCH = 0
+
+# This shuffles action order entirely. 
+# The more actors/battlers there are, the more random it will feel.
+SHUFFLE_SWITCH = 0 
+
+#==============================================================================
+# * Create Action Order (OVERWRITE)
+#==============================================================================
+module BattleManager
+ def self.make_action_orders
+    @action_battlers = []
+    @action_battlers += $game_party.members unless @surprise
+    @action_battlers += $game_troop.members unless @preemptive
+    @action_battlers.each {|battler| battler.make_speed }
+    @action_battlers.sort! {|a,b| b.speed - a.speed }
+    @action_battlers = @action_battlers.shuffle if $game_switches[SHUFFLE_SWITCH]
+    @action_battlers = @action_battlers.reverse if $game_switches[REVERSAL_SWITCH]
+  end 
+end
+#==============================================================================
+# End of Script
+#==============================================================================
