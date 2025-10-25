@@ -1,0 +1,32 @@
+#==============================================================================
+# * Title: Volume Reduction During Cutscenes
+# * By: Axel FireForged
+#==============================================================================
+# Please provide credit to Axel FireForged if you use this!
+#==============================================================================
+# What does this script do?
+# 
+# During cutscenes you can now lower certain sounds.
+#==============================================================================
+# Setup:
+# 
+# When using this, if you want to lower volume for a Cutscene, you can use this.
+# Use the following script calls to lower certain volume catagories:
+# 
+# RPG::BGM.new(RPG::BGM.last.name, RPG::BGM.last.volume +/- Sound::SceneVolReduction, 
+# RPG::BGM.last.pitch).play
+#
+# For this, remove the # from the lines, and if you want to lower BGM, BGS or SEs
+# replace the BGM in the script call with the respective value you want.
+# While removing the / and the + or - depending on if you are reducing or
+# increasing the afformentioned volume.
+#==============================================================================
+# Customization is simple, swap out the 10 with a different value you 
+# want to lower the volume by.
+#==============================================================================
+module Sound
+  SceneVolReduction = 10
+end
+#==============================================================================
+# End of Script
+#==============================================================================
