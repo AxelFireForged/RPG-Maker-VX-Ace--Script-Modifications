@@ -24,11 +24,13 @@
 # Customization:
 
 # Assign this to a variable that controls what color will be selected!
-COLOR_VARIABLE = 2
+COLOR_VARIABLE = 0
 
 # For people who have a very long color list, you can now have an offset instead
 # of adding a certain number every time.
-COLOR_OFFSET = 32
+# WARNING! IF YOU HAVE LESS COLORS THAN THE OFFSET, TEXT WILL NOT APPEAR!
+# REFER TO LINE 16's LINK FOR AN EXAMPLE OF WHAT TO DO!
+COLOR_OFFSET = 0
 
 
 if $imported["YEA-MessageSystem"] = true
