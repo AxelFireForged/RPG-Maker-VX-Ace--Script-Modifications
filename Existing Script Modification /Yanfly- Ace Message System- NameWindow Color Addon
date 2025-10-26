@@ -1,0 +1,51 @@
+#==============================================================================
+# * Title: Yanfly's Ace Message System- NameWindow Color Addon
+# * By: Axel FireForged
+# * Requires: Yanfly Engine Ace - Ace Message System v1.05+
+# * https://github.com/Archeia/YEARepo/blob/master/Core/Ace_Message_System.rb
+#==============================================================================
+# Please provide credit to Axel FireForged if you use this!
+# Free for any use except porn games.
+# Be sure to follow Yanfly's terms of use as well!
+#==============================================================================
+# This script allows you to change up the color of everyone's name is a 
+# NameWindow so now your protagnist can have a custom color in their name box 
+# and NPCs can have another!
+# The color is based off your window skin, for those who have their window skin
+# as a png, fun fact you can just keep adding colors downward, like this:
+# https://imgur.com/a/tDcGvIE
+# Which allows for a lot more colors in yout games!
+#==============================================================================
+# Setup:
+#
+# Make sure to put this script below Yanfly's Ace Message System in your script
+# list!
+#==============================================================================
+# Customization:
+
+# Assign this to a variable that controls what color will be selected!
+COLOR_VARIABLE = 2
+
+# For people who have a very long color list, you can now have an offset instead
+# of adding a certain number every time.
+COLOR_OFFSET = 32
+
+
+if $imported["YEA-MessageSystem"] = true
+  
+#--------------------------------------------------------------------------
+# refresh (OVERWRITE)
+#--------------------------------------------------------------------------
+  
+  class Window_NameMessage < Window_Base
+    def refresh
+    contents.clear
+    reset_font_settings
+ @text = sprintf("\eC[%d]%s", ($game_variables[COLOR_VARIABLE] + COLOR_OFFSET), @text)
+    draw_text_ex(YEA::MESSAGE::NAME_WINDOW_PADDING, 0, @text)
+    end
+  end 
+end
+#==============================================================================
+# End of Script
+#==============================================================================
