@@ -1,0 +1,57 @@
+#==============================================================================
+# * Title: Customizable TP Setup
+# * By: Axel FireForged
+#==============================================================================
+# Please provide credit to Axel FireForged if you use this!
+# Free for any use except porn games.
+#==============================================================================
+# This script allows you to change up how much TP you start with; 
+#
+# Customization:
+#
+# How much TP do characters start with?
+# RPG Maker VX Ace usually is rand * 25
+BASE_TP = 15
+
+# If your player reaches a point where you want them to gain bonus TP at the 
+# start of a fight for every actor, set this switch to ON to gain this bonus
+SWITCH_ID_TP_BONUS = 0
+
+# If the switch is on, how much TP will they gain?
+SWITCH_TP_BONUS = 0
+
+# What state id does a Actor need to get a TP bonus at the start of fights?
+STATE_ID_TP_BONUS = 0
+
+# If the state is applied, how much TP will they gain?
+STATE_TP_BONUS = 0
+
+# If your player reaches a point where you want them to gain bonus TP at the 
+# start of a fight for every actor, set this to a variable you want.
+# During the game you can set a number to the variable to add more TP to them.
+VARIABLE_TP_BONUS = 0
+
+# Want a little randomization? Put a value here for it to add a random amount
+# based on what you specify.
+RND_ADD_VALUE = 0
+
+# Want a little randomization? Put a value here for it to subtract a random 
+# amount based on what you specify. Needs to be a whole number.
+RND_SUB_VALUE = 0
+
+class Game_Battler < Game_BattlerBase
+#--------------------------------------------------------------------------
+# * Initialize TP (OVERWRITE) 
+#--------------------------------------------------------------------------
+  def init_tp 
+    self.tp = BASE_TP
+    self.tp += SWITCH_TP_BONUS if $game_switches[SWITCH_ID_TP_BONUS]
+    self.tp += STATE_TP_BONUS if self.state?(STATE_TP_BONUS)
+    self.tp += $game_variables[VARIABLE_TP_BONUS]
+    self.tp += rand(RND_ADD_VALUE) if RND_ADD_VALUE > 0
+    self.tp -= rand(RND_SUB_VALUE) if RND_SUB_VALUE > 0
+  end
+end
+#==============================================================================
+# End of Script
+#==============================================================================
