@@ -5,6 +5,11 @@
 # Please provide credit to Axel FireForged if you use this!
 # Free for any use except porn games.
 #==============================================================================
+# Updates:
+# 10/26/2025: Added the ability to change what order shuffling or reverse 
+# happens in. Either reverse then shuffle or shuffle then reverse via a switch.
+# 10/25/2025: Original Release
+#==============================================================================
 # What does this script do?
 #
 # This script allows you to change up how the action order is created, allowing
@@ -12,11 +17,12 @@
 #
 # Depending on what switches you use, you can either reverse turn order or
 # make it entirely random.
-# If you are using both switches, shuffling goes first, then reversal.
+# If you are using both switches, you can change what happens first below.
 #
 # If you have a script that messes with BattleManager, there is a chance that
 # the script doesn't work.
-# 
+#
+module BattleManager
 #==============================================================================
 # * Customization Section
 #==============================================================================
@@ -29,18 +35,28 @@ REVERSAL_SWITCH = 0
 # The more actors/battlers there are, the more random it will feel.
 SHUFFLE_SWITCH = 0 
 
+# If you want shuffling to go first before reversal, leave this as 0.
+# Set this to a switch and turn it on if you want it to reverse then randomize, 
+# I think it is pointless, but hey, you're reading this, not me.
+PRIORITY_CHANGE = 0
+
 #==============================================================================
 # * Create Action Order (OVERWRITE)
 #==============================================================================
-module BattleManager
+
  def self.make_action_orders
     @action_battlers = []
     @action_battlers += $game_party.members unless @surprise
     @action_battlers += $game_troop.members unless @preemptive
     @action_battlers.each {|battler| battler.make_speed }
     @action_battlers.sort! {|a,b| b.speed - a.speed }
-    @action_battlers = @action_battlers.shuffle if $game_switches[SHUFFLE_SWITCH]
-    @action_battlers = @action_battlers.reverse if $game_switches[REVERSAL_SWITCH]
+    if $game_switches[PRIORITY_CHANGE] = false
+      @action_battlers = @action_battlers.shuffle if $game_switches[SHUFFLE_SWITCH]
+      @action_battlers = @action_battlers.reverse if $game_switches[REVERSAL_SWITCH]
+    else
+      @action_battlers = @action_battlers.shuffle if $game_switches[REVERSAL_SWITCH]
+      @action_battlers = @action_battlers.reverse if $game_switches[SHUFFLE_SWITCH]
+    end
   end 
 end
 #==============================================================================
