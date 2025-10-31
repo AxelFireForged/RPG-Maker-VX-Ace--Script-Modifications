@@ -1,0 +1,114 @@
+#==============================================================================
+# * Title: Competitive Stat Raise Passive
+# * By: Axel FireForged & Blesstama
+#==============================================================================
+# Please provide credit to Axel FireForged & Blesstama if you use this!
+# Free for any use except porn games.
+#==============================================================================
+# What does this script do?
+# 
+# This overwrites the (Debuff) Effect code in Game_Battler and adds new code.
+# 
+# This allows an actor to raise a specific stat when debuffed, acts like 
+# the ability Competitive from the Pokemon series.
+
+# Not compatible with Debuff Counter
+#
+#==============================================================================
+# Setup:
+# 
+# Actor's Notebox:
+#
+# For actors to gain this passive you need to put <Passive_Competitive>
+# in the notebox. Customization will be explained below.
+# 
+# May update so you can also use for Battlers too.
+#
+#==============================================================================
+
+# This is the Actor's random chance's max for if their passive procs. 
+RND_AC_COMP = 100
+
+# When the RND_AC_COMP is rolled, if it rolls under the RND_AC_COMP_CHANCE, 
+# the proc is successful and the user gets a stat buff
+RND_AC_COMP_CHANCE = 100
+
+# When an Actor gets their boost they can play an animation, set this to an ID.
+AC_COMP_ANI_ID = 41
+
+# When an Actor's ability procs, you can add a log message! 
+# Make sure it stays in the quotes!
+AC_COMP_TEXT = "But they felt competitive!"
+
+# What stat will be raised when they are hit with a debuff?
+# MHP = 0   MMP = 1   ATK = 2   DEF = 3
+# MAT = 4   MDF = 5   AGI = 6   LUK = 7
+RAISED_COMP_STAT = 2
+
+# How long will the buff last? I recommend making this last 1 turn longer than
+# you want it to last!
+COMP_STAT_DUARATION = 5
+
+#==============================================================================
+  #--------------------------------------------------------------------------
+  # * Ability to do log messages in battle/map - Blesstama's Code
+  #--------------------------------------------------------------------------
+class Scene_Battle < Scene_Base 
+  attr_accessor:log_window
+end
+
+class Scene_Map < Scene_Base 
+  attr_accessor:log_window
+end
+
+
+class Game_Enemy < Game_Battler
+  #--------------------------------------------------------------------------
+  # * Easy Note Grabbing - Blesstama's Code
+  #--------------------------------------------------------------------------
+  def note
+    enemy.note.to_s
+  end
+  
+  def get_all_notes(*args)
+    notes = ""
+    notes += note unless args.include?(:self)
+    states.compact.each { |state| notes += state.note } unless args.include?(:state)
+    notes
+  end
+end
+class Game_Actor < Game_Battler
+  def note
+    actor.note.to_s
+  end
+
+  def get_all_notes(*args)
+    notes = ""
+    notes += note unless args.include?(:self)
+    notes += self.class.note unless args.include?(:class)
+    equips.compact.each { |equip| notes += equip.note } unless args.include?(:equip)
+    states.compact.each { |state| notes += state.note } unless args.include?(:state)
+    notes
+  end
+end
+
+class Game_Battler < Game_BattlerBase
+  #--------------------------------------------------------------------------
+  # * [Debuff] Effect - Axel Code
+  #--------------------------------------------------------------------------
+  def item_effect_add_debuff(user, item, effect)
+    chance = debuff_rate(effect.data_id) * luk_effect_rate(user)
+    if rand < chance
+      comp = self.get_all_notes.include?("<Passive_Competitive>") && rand(RND_AC_COMP) <= RND_AC_COMP_CHANCE
+      user.add_debuff(effect.data_id, effect.value1) if comp
+      self.animation_id = AC_COMP_ANI_ID if comp
+      add_buff(RAISED_COMP_STAT, COMP_STAT_DUARATION) if comp
+      SceneManager.scene.log_window.add_text(AC_COMP_TEXT) if comp
+      add_debuff(effect.data_id, effect.value1)
+      @result.success = true
+    end
+  end
+end
+#==============================================================================
+# End of Script
+#==============================================================================
