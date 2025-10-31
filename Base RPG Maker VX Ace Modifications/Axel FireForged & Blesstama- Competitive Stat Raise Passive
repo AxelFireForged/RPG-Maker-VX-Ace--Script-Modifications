@@ -11,7 +11,7 @@
 # 
 # This allows an actor to raise a specific stat when debuffed, acts like 
 # the ability Competitive from the Pokemon series.
-
+#
 # Not compatible with Debuff Counter
 #
 #==============================================================================
