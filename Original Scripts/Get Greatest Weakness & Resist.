@@ -1,0 +1,60 @@
+#==============================================================================
+# * Title: Greatest Weakness or Resistance Check
+# * By: Axel FireForged
+#==============================================================================
+# Please provide credit to Axel FireForged if you use this!
+# Free for any use except porn games.
+#==============================================================================
+# Updates:
+# 4/15/2026: Original Release
+#==============================================================================
+# What does this script do?
+#
+# This script allows you to check with an actor or battler the greatest weakness
+# to an element or resistance. This doesn't overwrite anything, so add it if
+# you'd please.
+#
+# Next you'll see "next if i == 0" add these again and replace 0 with the 
+# element id to skip it in database.
+#-----------------------------------------------------------------------------
+class Game_Battler < Game_BattlerBase
+#-----------------------------------------------------------------------------
+# * Check for greatest weakness
+#-----------------------------------------------------------------------------
+  def greatest_weak?
+    max_rate = 0
+    max_element = nil
+    $data_system.elements.each_with_index do |element, i|
+      next if i == 0  
+#     next if i ==
+      next if element.nil? || element.empty? 
+      rate = element_rate(i)
+      if rate > max_rate
+        max_rate = rate
+        max_element = i
+      end
+    end
+    return max_element
+  end
+
+#--------------------------------------------------------------------------
+# * Check for biggest resistance
+#--------------------------------------------------------------------------
+  def greatest_resist?
+    min_rate = Float::INFINITY
+    min_element = nil
+
+    $data_system.elements.each_with_index do |element, i|
+      next if i == 0  
+#     next if i ==
+      next if element.nil? || element.empty?
+      rate = element_rate(i)
+      if rate < min_rate
+        min_rate = rate
+        min_element = i
+      end
+    end
+
+    return min_element
+  end
+end
